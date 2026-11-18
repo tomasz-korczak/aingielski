@@ -35,7 +35,9 @@
   auto-detected `;`/`,` delimiter, no header row.
 - CSV, text-to-speech and Android are user-mandated product constraints, not implementation
   choices; they are kept as such.
-- Defaults chosen without asking (documented in Assumptions/FRs): sets < 10 words are not
-  selectable in quiz; skipped answers excluded from the "difficult" error ratio; average success =
-  mean of per-session percentages; duplicate words in a CSV invalidate the file; American variant
-  and skipping enabled by default; unfinished quiz discarded if the app is killed.
+- Defaults chosen without asking (documented in Assumptions/FRs): duplicate words in a CSV
+  invalidate the file; American variant and skipping enabled by default.
+- Later confirmed or changed by clarification (see spec › Clarifications): files with fewer than
+  10 words are rejected at import; skipped answers are excluded from the "difficult" error ratio;
+  average success = mean of per-session percentages; a quiz cut off by the system is saved like
+  an abort, not discarded.

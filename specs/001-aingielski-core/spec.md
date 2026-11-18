@@ -258,7 +258,8 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-001**: The app MUST display all interface text in Polish.
 - **FR-002**: The app name shown to users MUST be exactly "AIngielski" (capital A and I).
 - **FR-003**: The app MUST have a modern launcher icon depicting a combined US and UK flag.
-- **FR-004**: The app MUST work in portrait orientation only.
+- **FR-004**: The app MUST work in portrait orientation, including upside-down portrait; it MUST
+  never switch to landscape.
 - **FR-005**: The main screen MUST provide a burger menu with "Ustawienia" (settings) and
   "Słówka" (word management).
 - **FR-006**: The main screen MUST show function tiles, each with a title and a modern icon:
@@ -268,7 +269,8 @@ nothing deleted), then typing 57 (all statistics removed).
 
 - **FR-010**: The quiz setup MUST list all word sets with their word counts and allow selecting one.
 - **FR-011**: The setup MUST display the allowed word-count range for the selected set: minimum 10,
-  maximum equal to the set's word count.
+  maximum equal to the set's word count. The word-count field MUST be pre-filled with 10 and
+  keep the learner's value when a different set is selected (re-validated against the new range).
 - **FR-012**: The setup MUST reject counts below 10 or above the set size with a clear Polish error
   message stating the allowed range, and MUST NOT start the quiz in that case.
 - **FR-013**: The setup MUST offer exactly one selection criterion at a time: "Losowe" (random,
@@ -287,6 +289,8 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-020**: The quiz screen MUST show progress as "current / total" (starting at 1).
 - **FR-021**: Each word MUST be spoken automatically when presented, using the voice and English
   variant from settings, without revealing the word, its translation or its example sentence.
+  The settings in effect when the quiz starts (variant, voice, word skipping) apply until the quiz
+  ends.
 - **FR-022**: The answer input MUST appear after the first automatic playback finishes.
 - **FR-022a**: The answer input MUST request the keyboard to disable autocorrection, word
   suggestions and automatic capitalization, so the checked answer is exactly what the learner
@@ -308,21 +312,21 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-027**: The quiz MUST NOT offer any way to return to a previous word; the system back action
   MUST NOT leave or rewind the quiz.
 - **FR-028**: When skipping is enabled, the learner MUST be able to abort the quiz ("Przerwij quiz")
-  after confirming. If at least one word was answered (correct or incorrect), the session MUST be
+  after confirming. The abort action MUST be available from the moment the answer field appears
+  until the quiz ends, both while answering and after an answer is revealed. If at least one word was answered (correct or incorrect), the session MUST be
   saved with all not-yet-completed words — including the word currently on screen if it has not
   been answered or skipped — recorded as skipped and marked as not played (they remain "new" for
   FR-014); otherwise no session is saved.
 - **FR-028a**: Each word result MUST be stored as soon as it is given, so that if the app is closed
   by the system mid-quiz, the session is retained by the same rule as an abort (FR-028), regardless
-  of the skipping setting. Interrupted quizzes MUST NOT be resumed.
-- **FR-029**: The result (correct / incorrect / skipped) of every word MUST be recorded for the
-  session.
+  of the skipping setting. Interrupted quizzes MUST NOT be resumed. (What is stored per word is
+  defined in FR-071.)
 
 **Quiz summary**
 
 - **FR-030**: After the last word, the app MUST show the counts of correct, incorrect and skipped
-  words and the success percentage = correct ÷ number of words in this quiz × 100, rounded to a
-  whole number.
+  words and the success percentage = correct ÷ number of words in this quiz × 100, rounded
+  half-up to a whole number (e.g. 7 of 12 → 58%).
 - **FR-031**: The summary MUST list every quiz word colored green (correct), red (incorrect) or
   orange (skipped); incorrect entries MUST also show what the learner typed.
 - **FR-032**: The summary MUST offer "Wróć do ekranu głównego" (main screen) and "Nowy quiz"
@@ -358,7 +362,8 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-054a**: A file with fewer than 10 valid word entries MUST be rejected with a Polish message
   that a set needs at least 10 words; nothing is saved. Every saved set is therefore usable in a
   quiz.
-- **FR-055**: Set names MUST be non-empty and unique (case-insensitive, trimmed). If the name
+- **FR-055**: Set names MUST be non-empty, at most 50 characters and unique (case-insensitive,
+  trimmed). If the name
   already exists, the app MUST ask whether to overwrite; confirming MUST replace the entire content
   of that set, declining MUST abort the import with no changes.
 - **FR-056**: The app MUST NOT offer in-app editing of word sets; content changes happen only via
@@ -369,7 +374,8 @@ nothing deleted), then typing 57 (all statistics removed).
 
 - **FR-060**: The statistics screen MUST show the total session count, the total number of recorded
   words split into correct / incorrect / skipped, and the average success percentage = mean of the
-  per-session success percentages across all sessions.
+  per-session success percentages across all sessions (completed and aborted). The mean is
+  computed from unrounded per-session values and shown rounded half-up to a whole number.
 - **FR-061**: The screen MUST show a line chart of the 10 most recent sessions (fewer if fewer exist)
   in chronological order, x-axis labelled with session start date and hour, with two lines: correct
   and incorrect counts.
@@ -378,8 +384,8 @@ nothing deleted), then typing 57 (all statistics removed).
   counts.
 - **FR-063**: "Wyczyść dane" MUST show a clear warning that all statistics will be permanently
   deleted and require the learner to type the total recorded word count; a wrong value MUST show an
-  error and abort; the correct value MUST delete all sessions and nothing else.
-- **FR-064**: Statistics can be removed only through FR-063.
+  error and abort; the correct value MUST delete all sessions and nothing else. This is the only
+  action that removes statistics.
 
 **Data**
 

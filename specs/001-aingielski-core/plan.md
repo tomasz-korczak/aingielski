@@ -157,7 +157,7 @@ app/
     │   └── res/
     │       ├── values/strings.xml         # All Polish UI text
     │       ├── values/colors.xml, themes.xml
-    │       ├── drawable/                  # ic_* vector icons (utility glyphs + tile illustrations)
+    │       ├── drawable/                  # ic_* vector icons (utility glyphs)
     │       ├── drawable/ic_launcher_foreground.xml, ic_launcher_monochrome.xml
     │       └── mipmap-anydpi-v26/ic_launcher.xml, ic_launcher_round.xml
     ├── test/java/pl/aingielski/           # JVM unit tests: domain/*, ui/*ViewModelTest, FakeSpeechEngine
@@ -180,7 +180,8 @@ app is offline and single-user.
 | History matching | Normalized `set_name_key` and `word_key` (Unicode lowercase); no foreign key from sessions to sets | R7 |
 | CSV | In-house parser; auto `;`/`,` delimiter; no header; all errors collected; nothing saved on error | R9, [contract](./contracts/csv-import-format.md) |
 | Colors | Seed indigo #2B4C9B, coral #D9434F, amber #F2A93B; light and dark themes; dynamic color off; semantic result colors | R3 |
-| Icons | Hand-authored vector drawables; adaptive launcher icon (diagonal US/UK flag) with monochrome layer; two-tone tile icons | R4 |
+| Icons | Hand-authored vectors; adaptive launcher icon (diagonal US/UK flag) with monochrome layer; two-tone tile icons as Kotlin `ImageVector`s colored from the theme | R4 |
+| Answer field | Clear-text field with keyboard hints that turn off suggestions and autocorrect ("visible password" input variation; nothing is masked) and excluded from autofill | FR-022a |
 | Chart | Custom Compose Canvas, 10 points, 2 series | R10 |
 | Orientation/back | `sensorPortrait`; the quiz back action is intercepted and opens the abort dialog only when skipping is on | R12 |
 

@@ -119,8 +119,8 @@ whose `set_name_key` equals the key of the selected set.
 | **Played keys** | Distinct `word_key` with `played = 1` in matching sessions |
 | **New words** (FR-014) | Entries of the set whose `word_key` is not among the played keys |
 | **Difficult words** (FR-015) | Group matching `session_word` rows by `word_key`. Let `c` = number of CORRECT rows and `i` = number of INCORRECT rows. Difficult when `c + i > 0` and `i / (c + i) ≥ 0.51`. SKIPPED rows are ignored. |
-| **Session success %** | `round(100 × correct / word_count)` |
-| **Global totals** (FR-060) | Number of sessions. Sums of correct, incorrect and skipped. Average = mean of the per-session success % values (0 sessions → shown as "—"). |
+| **Session success %** | `100 × correct / word_count`, displayed rounded half-up to a whole number |
+| **Global totals** (FR-060) | Number of sessions. Sums of correct, incorrect and skipped. Average = mean of the **unrounded** per-session success % values, displayed rounded half-up (0 sessions → shown as "—"). |
 | **Chart** (FR-061) | The 10 newest sessions by `started_at`, shown oldest to newest, with their correct and incorrect counts |
 | **Clear-data verification** | The typed number must equal the sum of correct, incorrect and skipped across all sessions |
 

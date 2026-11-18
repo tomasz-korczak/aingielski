@@ -46,15 +46,17 @@ Each entry records the decision, why it was chosen, and the alternatives conside
 
 ## R4. Icons
 
-- **Decision**: Every icon is hand-authored as an Android vector drawable in the repository. No
-  icon library dependency and no PNG assets.
+- **Decision**: Every icon is hand-authored as a vector in the repository: XML vector drawables
+  for the launcher and utility icons, Kotlin `ImageVector`s for the tile illustrations. No icon
+  library dependency and no PNG assets.
   - **Launcher**: an adaptive icon. The foreground is a rounded badge split diagonally: Union Jack
     (UK) on the upper-left half, Stars & Stripes (US) on the lower-right half, with a subtle white
     divider. The background is the primary indigo. A monochrome layer supports Android 13+
     themed icons.
   - **Tile "Odsłuchaj słówka"**: headphones with sound waves and a small letter "A" bubble.
   - **Tile "Statystyka"**: a rising line chart over bars with a trend dot.
-  - **Tiles in general**: two-tone, filled with theme roles (primary and secondary container).
+  - **Tiles in general**: two-tone Kotlin `ImageVector`s whose colors are passed in from the
+    current theme, because XML drawables can't follow the app's light and dark colors.
   - **Utility glyphs** (menu, play, replay, delete, back, skip, check, close, settings, words,
     chevron, warning, import): drawn in the 24dp Material Symbols "Rounded" style and tinted via
     `LocalContentColor` so they follow the theme.
