@@ -31,6 +31,15 @@ set never affects session stats." (full original description retained in convers
   apart from letter case and surrounding/repeated spaces, the answer must match exactly.
 - Q: What happens to a quiz when the system closes the app mid-quiz? → A: It is saved like an
   abort (only if at least one word was answered; remaining words skipped, not played); no resume.
+- Q: When does the "Pomiń" (skip) button appear for a quiz word? → A: Together with the input
+  field, after the first automatic playback finishes.
+- Q: Does a word heard but left unanswered when a quiz is aborted still count as "new"? → A: Yes;
+  every word without an answer or a user skip at abort/interruption is marked as not played.
+- Q: How are words with several accepted forms (e.g. "colour/color") handled? → A: Not
+  supported — one form per entry; the word field is the only accepted answer, and its spelling
+  applies regardless of the American/British setting (which affects pronunciation only).
+- Q: Should keyboard autocorrect and suggestions be disabled in the answer field? → A: Yes —
+  autocorrect, suggestions and auto-capitalization are turned off.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -94,9 +103,9 @@ feedback, the progress counter, and the final summary (counts, percentage, color
    is marked correct (case-insensitive) and the Polish translation is shown.
 6. **Given** an answer was submitted, **When** the feedback is shown, **Then** a "Dalej" (next)
    button appears, the skip button is hidden, and both play buttons remain available.
-7. **Given** word skipping is enabled in settings, **When** a word is presented, **Then** a "Pomiń"
-   (skip) button is visible; pressing it records the word as skipped and reveals the correct
-   word and translation before moving on.
+7. **Given** word skipping is enabled in settings, **When** the first automatic playback of a word
+   has finished, **Then** a "Pomiń" (skip) button appears together with the input field; pressing
+   it records the word as skipped and reveals the correct word and translation before moving on.
 8. **Given** all words have been answered or skipped, **When** the last word is completed,
    **Then** a summary shows correct / incorrect / skipped counts, the success percentage for this
    quiz, and every quiz word colored green (correct), red (incorrect) or orange (skipped), with
@@ -279,22 +288,30 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-021**: Each word MUST be spoken automatically when presented, using the voice and English
   variant from settings, without revealing the word, its translation or its example sentence.
 - **FR-022**: The answer input MUST appear after the first automatic playback finishes.
+- **FR-022a**: The answer input MUST request the keyboard to disable autocorrection, word
+  suggestions and automatic capitalization, so the checked answer is exactly what the learner
+  typed. (Keyboards that ignore this request are outside the app's control.)
 - **FR-023**: The learner MUST be able to replay the word and play its example sentence an
   unlimited number of times, via buttons with play icons and captions "Odtwórz ponownie" and
   "Odtwórz zdanie", before and after answering.
-- **FR-024**: When word skipping is enabled, a "Pomiń" button MUST be shown until the word is
-  answered; skipping records the word as skipped and shows the correct word and translation.
+- **FR-024**: When word skipping is enabled, a "Pomiń" button MUST appear together with the input
+  field (after the first automatic playback finishes) and remain until the word is answered; skipping records the word as skipped and shows the correct word and translation.
 - **FR-025**: Submitted answers MUST be compared with the played word case-insensitively, ignoring
   leading/trailing whitespace and collapsing repeated inner spaces. All other characters,
-  including apostrophes, hyphens and other punctuation, MUST match exactly.
+  including apostrophes, hyphens and other punctuation, MUST match exactly. The word field of an
+  entry is the single accepted answer: characters such as "/" or parentheses have no special
+  meaning, and no alternative forms are recognised.
+- **FR-025a**: The English variant setting (FR-040) affects pronunciation only; accepted spelling
+  is always exactly the word as written in the imported set, regardless of variant.
 - **FR-026**: After an answer, the app MUST show whether it was correct, the correct word (when
   incorrect) and the Polish translation; then show "Dalej", hide "Pomiń", and keep the play buttons.
 - **FR-027**: The quiz MUST NOT offer any way to return to a previous word; the system back action
   MUST NOT leave or rewind the quiz.
 - **FR-028**: When skipping is enabled, the learner MUST be able to abort the quiz ("Przerwij quiz")
   after confirming. If at least one word was answered (correct or incorrect), the session MUST be
-  saved with all not-yet-completed words recorded as skipped and marked as not played; otherwise no
-  session is saved.
+  saved with all not-yet-completed words — including the word currently on screen if it has not
+  been answered or skipped — recorded as skipped and marked as not played (they remain "new" for
+  FR-014); otherwise no session is saved.
 - **FR-028a**: Each word result MUST be stored as soon as it is given, so that if the app is closed
   by the system mid-quiz, the session is retained by the same rule as an abort (FR-028), regardless
   of the skipping setting. Interrupted quizzes MUST NOT be resumed.
@@ -370,8 +387,8 @@ nothing deleted), then typing 57 (all statistics removed).
   translation, example sentence).
 - **FR-071**: The app MUST store each session on the device: word set name, start date and time, the
   words selected for the session (with their translations, independent of the word set), and for
-  each word its result (correct / incorrect / skipped), what the learner typed, and whether it was
-  actually played.
+  each word its result (correct / incorrect / skipped), what the learner typed, and whether it
+  counts as played (completed by an answer or "Pomiń", per FR-028).
 - **FR-072**: Session data MUST be self-contained so that it remains complete after the word set is
   deleted or overwritten.
 
@@ -415,12 +432,15 @@ nothing deleted), then typing 57 (all statistics removed).
   settings.
 - CSV files are UTF-8 encoded (Polish characters supported); fields containing the delimiter are
   enclosed in double quotes; blank lines are ignored.
+- CSV authors write exactly one answer form per entry and choose the spelling (US or GB)
+  themselves; the app does not convert spellings between variants.
 - Duplicate English words in one file make the file invalid (keeps "new" and "difficult" tracking
   unambiguous).
 - Statistics link to words by set name + English word (case-insensitive); importing a set under a
   name used earlier reuses the history recorded under that name.
-- "Played" means the word was spoken at least once in the session; aborted-unplayed words count as
-  skipped in totals but do not make a word "not new".
+- "Played" means the word was presented and the learner completed it (answered or pressed
+  "Pomiń"). Words left unfinished by an abort or interruption — including one already heard but
+  not answered — count as skipped in totals but do not make a word "not new".
 - Backgrounding keeps quiz state; an unfinished quiz is never resumed after the app is closed by
   the system (see FR-028a).
 - Exact Polish wording of buttons and messages given here is indicative and may be refined, as
