@@ -21,6 +21,16 @@ set never affects session stats." (full original description retained in convers
 
 - Q: Which CSV format should import accept? → A: Delimiter auto-detected (semicolon or comma),
   no header row; every non-blank line is a word entry.
+- Q: How do skipped words count toward the "difficult words" error ratio? → A: They are ignored;
+  ratio = incorrect ÷ (correct + incorrect).
+- Q: How is the global "average % success" calculated? → A: Mean of per-session success
+  percentages (each session weighs equally).
+- Q: What happens to a CSV file with fewer than 10 valid lines? → A: Import is rejected; every
+  saved set has at least 10 words.
+- Q: Should answer checking forgive punctuation differences (e.g. "dont" vs "don't")? → A: No;
+  apart from letter case and surrounding/repeated spaces, the answer must match exactly.
+- Q: What happens to a quiz when the system closes the app mid-quiz? → A: It is saved like an
+  abort (only if at least one word was answered; remaining words skipped, not played); no resume.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -203,8 +213,8 @@ nothing deleted), then typing 57 (all statistics removed).
 
 - No word sets imported: quiz setup shows a Polish message with a shortcut to "Słówka"; the quiz
   cannot start.
-- A word set has fewer than 10 words: it is listed in quiz setup but cannot be selected, with an
-  explanation that at least 10 words are required.
+- CSV file with fewer than 10 valid lines: import rejected with a Polish message that a set needs
+  at least 10 words; nothing is saved.
 - Empty or whitespace-only answer: the answer cannot be submitted.
 - Leading/trailing spaces in the answer are ignored; repeated inner spaces are treated as one.
 - Speech engine unavailable or fails: the learner sees a Polish message with a shortcut to device
@@ -212,7 +222,10 @@ nothing deleted), then typing 57 (all statistics removed).
 - Playback is requested while another playback is in progress: the current playback stops and the
   new one starts.
 - App moved to background mid-quiz and resumed: the quiz continues at the same word and state.
-- App process terminated mid-quiz: the unfinished session is discarded (not saved).
+- App closed by the system mid-quiz (low memory, swiped away, phone restart): the session is kept
+  exactly as if aborted — saved only if at least one word was answered, remaining words recorded
+  as skipped and not played. This applies whether or not skipping is enabled. The quiz is not
+  resumed.
 - Skipping disabled: no skip and no abort option; the quiz can only be left by finishing it.
 - CSV file empty or containing only blank lines: import rejected with a Polish message.
 - CSV line with more than three fields (e.g. an unquoted comma inside a sentence in a
@@ -272,7 +285,8 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-024**: When word skipping is enabled, a "Pomiń" button MUST be shown until the word is
   answered; skipping records the word as skipped and shows the correct word and translation.
 - **FR-025**: Submitted answers MUST be compared with the played word case-insensitively, ignoring
-  leading/trailing whitespace and collapsing repeated inner spaces.
+  leading/trailing whitespace and collapsing repeated inner spaces. All other characters,
+  including apostrophes, hyphens and other punctuation, MUST match exactly.
 - **FR-026**: After an answer, the app MUST show whether it was correct, the correct word (when
   incorrect) and the Polish translation; then show "Dalej", hide "Pomiń", and keep the play buttons.
 - **FR-027**: The quiz MUST NOT offer any way to return to a previous word; the system back action
@@ -281,6 +295,9 @@ nothing deleted), then typing 57 (all statistics removed).
   after confirming. If at least one word was answered (correct or incorrect), the session MUST be
   saved with all not-yet-completed words recorded as skipped and marked as not played; otherwise no
   session is saved.
+- **FR-028a**: Each word result MUST be stored as soon as it is given, so that if the app is closed
+  by the system mid-quiz, the session is retained by the same rule as an abort (FR-028), regardless
+  of the skipping setting. Interrupted quizzes MUST NOT be resumed.
 - **FR-029**: The result (correct / incorrect / skipped) of every word MUST be recorded for the
   session.
 
@@ -321,6 +338,9 @@ nothing deleted), then typing 57 (all statistics removed).
   applies to the whole file.
 - **FR-054**: If any line is invalid, the import MUST be aborted entirely, saving nothing, and the
   app MUST show the line number(s) and the missing field(s).
+- **FR-054a**: A file with fewer than 10 valid word entries MUST be rejected with a Polish message
+  that a set needs at least 10 words; nothing is saved. Every saved set is therefore usable in a
+  quiz.
 - **FR-055**: Set names MUST be non-empty and unique (case-insensitive, trimmed). If the name
   already exists, the app MUST ask whether to overwrite; confirming MUST replace the entire content
   of that set, declining MUST abort the import with no changes.
@@ -401,7 +421,8 @@ nothing deleted), then typing 57 (all statistics removed).
   name used earlier reuses the history recorded under that name.
 - "Played" means the word was spoken at least once in the session; aborted-unplayed words count as
   skipped in totals but do not make a word "not new".
-- An unfinished quiz is not persisted if the app process is terminated; backgrounding keeps state.
+- Backgrounding keeps quiz state; an unfinished quiz is never resumed after the app is closed by
+  the system (see FR-028a).
 - Exact Polish wording of buttons and messages given here is indicative and may be refined, as
   long as it remains Polish and unambiguous.
 - Only the two tiles listed are in scope; further learning modes are future features.
