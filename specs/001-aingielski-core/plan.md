@@ -147,8 +147,9 @@ app/
     │   │   │   └── android/AndroidTtsSpeechEngine.kt
     │   │   └── ui/
     │   │       ├── theme/                 # Color.kt (scheme + result colors), Theme.kt, Type.kt
+    │   │       ├── icons/                 # TileIcons.kt (two-tone tile illustrations, theme-colored)
     │   │       ├── navigation/AppNavHost.kt
-    │   │       ├── components/            # Tile, ResultChip, PlayButton, VoiceMissingDialog, LineChart
+    │   │       ├── components/            # Tile, ResultBadge, PlayButton, NoSuggestionsTextField, VoiceMissingDialog, LineChart
     │   │       ├── home/                  # HomeScreen + drawer
     │   │       ├── settings/              # SettingsScreen, SettingsViewModel
     │   │       ├── words/                 # WordSetsScreen, WordSetDetailScreen, ImportDialog, ViewModels

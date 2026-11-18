@@ -127,8 +127,9 @@ whose `set_name_key` equals the key of the selected set.
 **Word selection** (FR-016, FR-017) is a pure function:
 
 ```text
-selectWords(entries, criterionKeys?, count, random)
-  preferred = entries filtered by criterionKeys, shuffled
+selectWords(entries, preferredKeys (ordered or unordered), count, random)
+  preferred = entries in preferredKeys; NEW_ONLY: shuffled;
+              DIFFICULT: sorted by error ratio descending, ties shuffled
   rest      = remaining entries, shuffled
   result    = (preferred + rest).take(count), shuffled again
 ```

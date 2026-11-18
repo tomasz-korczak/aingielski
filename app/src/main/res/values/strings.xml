@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- App & navigation -->
+    <string name="app_name" translatable="false">AIngielski</string>
+    <string name="nav_settings">Ustawienia</string>
+    <string name="nav_words">Słówka</string>
+    <string name="tile_listen">Odsłuchaj słówka</string>
+    <string name="tile_stats">Statystyka</string>
+    <string name="menu_open">Otwórz menu</string>
+    <string name="back">Wstecz</string>
+    <string name="cancel">Anuluj</string>
+    <string name="save">Zapisz</string>
+    <string name="ok">OK</string>
+    <string name="expand">Rozwiń</string>
+    <string name="collapse">Zwiń</string>
+
+    <!-- Word sets (US1) -->
+    <string name="words_title">Słówka</string>
+    <string name="words_import">Importuj</string>
+    <string name="words_empty">Nie masz jeszcze żadnych zestawów. Zaimportuj plik CSV, aby zacząć.</string>
+    <string name="words_delete_cd">Usuń zestaw %1$s</string>
+    <string name="words_delete_title">Usunąć zestaw?</string>
+    <string name="words_delete_message">Zestaw „%1$s” zostanie usunięty. Statystyki pozostaną bez zmian.</string>
+    <string name="words_delete_confirm">Usuń</string>
+    <string name="words_imported">Zaimportowano zestaw „%1$s”</string>
+    <string name="words_reading">Wczytywanie pliku…</string>
+    <plurals name="word_count">
+        <item quantity="one">%d słówko</item>
+        <item quantity="few">%d słówka</item>
+        <item quantity="many">%d słówek</item>
+        <item quantity="other">%d słówka</item>
+    </plurals>
+    <string name="import_name_title">Nazwa zestawu</string>
+    <string name="import_name_label">Nazwa</string>
+    <string name="import_name_blank">Podaj nazwę zestawu.</string>
+    <!-- The limit is always 50, so the genitive plural is always correct here. -->
+    <string name="import_name_too_long" tools:ignore="PluralsCandidate">Nazwa może mieć najwyżej %1$d znaków.</string>
+    <string name="import_confirm">Importuj</string>
+    <plurals name="import_entries_found">
+        <item quantity="one">Znaleziono %d słówko.</item>
+        <item quantity="few">Znaleziono %d słówka.</item>
+        <item quantity="many">Znaleziono %d słówek.</item>
+        <item quantity="other">Znaleziono %d słówka.</item>
+    </plurals>
+    <string name="import_overwrite_title">Zestaw już istnieje</string>
+    <string name="import_overwrite_message">Zestaw „%1$s” już istnieje. Zastąpić go?</string>
+    <string name="import_overwrite_confirm">Zastąp</string>
+    <string name="import_error_title">Nie można zaimportować pliku</string>
+    <string name="import_error_intro">Nic nie zostało zapisane. Popraw plik i spróbuj ponownie.</string>
+    <string name="import_error_missing">Wiersz %1$d: brak pola %2$s.</string>
+    <string name="import_error_too_many">Wiersz %1$d: za dużo pól (oczekiwano 3).</string>
+    <string name="import_error_unclosed">Wiersz %1$d: niezamknięty cudzysłów.</string>
+    <string name="import_error_duplicate">Wiersz %1$d: słowo „%2$s” powtarza się (pierwsze wystąpienie: wiersz %3$d).</string>
+    <string name="import_error_too_few">Zestaw musi zawierać co najmniej 10 słówek (w pliku: %1$d).</string>
+    <string name="import_error_empty">Plik jest pusty.</string>
+    <string name="import_error_unreadable">Nie można odczytać pliku.</string>
+    <string name="field_word">„słowo”</string>
+    <string name="field_translation">„tłumaczenie”</string>
+    <string name="field_sentence">„zdanie przykładowe”</string>
+    <string name="field_separator">, </string>
+    <string name="col_word">Słowo</string>
+    <string name="col_translation">Tłumaczenie</string>
+    <string name="col_sentence">Zdanie przykładowe</string>
+
+    <!-- Quiz setup (US2, US3) -->
+    <string name="setup_title">Odsłuchaj słówka</string>
+    <string name="setup_choose_set">Wybierz zestaw</string>
+    <string name="setup_no_sets">Nie masz jeszcze żadnych zestawów słówek.</string>
+    <string name="setup_go_to_words">Przejdź do „Słówka”</string>
+    <string name="setup_count_label">Liczba słówek</string>
+    <string name="setup_count_range">Dozwolony zakres: %1$d–%2$d</string>
+    <string name="setup_count_not_number">Wpisz liczbę od %1$d do %2$d.</string>
+    <!-- The minimum is always 10, so the genitive plural is always correct here. -->
+    <string name="setup_count_too_low" tools:ignore="PluralsCandidate">Za mało – minimum to %1$d słówek.</string>
+    <plurals name="setup_count_too_high">
+        <item quantity="one">Za dużo – ten zestaw ma tylko %d słówko.</item>
+        <item quantity="few">Za dużo – ten zestaw ma tylko %d słówka.</item>
+        <item quantity="many">Za dużo – ten zestaw ma tylko %d słówek.</item>
+        <item quantity="other">Za dużo – ten zestaw ma tylko %d słówka.</item>
+    </plurals>
+    <string name="setup_criterion">Sposób wyboru słówek</string>
+    <string name="criterion_random">Losowe</string>
+    <string name="criterion_new" tools:ignore="Typos">Tylko nowe</string>
+    <string name="criterion_difficult">Trudne</string>
+    <plurals name="setup_match_count">
+        <item quantity="one">Pasuje %d słówko.</item>
+        <item quantity="few">Pasują %d słówka.</item>
+        <item quantity="many">Pasuje %d słówek.</item>
+        <item quantity="other">Pasuje %d słówka.</item>
+    </plurals>
+    <string name="setup_match_fill">Pozostałe zostaną wybrane losowo.</string>
+    <string name="setup_start">Rozpocznij</string>
+
+    <!-- Voices -->
+    <string name="voice_missing_title">Brak głosu angielskiego</string>
+    <string name="voice_missing_message">Na urządzeniu nie ma głosu offline dla wybranej odmiany angielskiego. Pobierz go w ustawieniach syntezy mowy, a potem wróć do aplikacji.</string>
+    <string name="voice_engine_unavailable">Synteza mowy nie działa na tym urządzeniu. Zainstaluj lub włącz silnik syntezy mowy w ustawieniach.</string>
+    <string name="voice_download">Pobierz głosy</string>
+
+    <!-- Quiz (US2) -->
+    <string name="quiz_title">Quiz</string>
+    <string name="quiz_progress">%1$d / %2$d</string>
+    <string name="quiz_progress_cd">Słówko %1$d z %2$d</string>
+    <string name="quiz_listening">Słuchaj…</string>
+    <string name="quiz_answer_hint">Wpisz usłyszane słowo</string>
+    <string name="quiz_check">Sprawdź</string>
+    <string name="quiz_skip">Pomiń</string>
+    <string name="quiz_abort">Przerwij quiz</string>
+    <string name="quiz_replay">Odtwórz ponownie</string>
+    <string name="quiz_play_sentence">Odtwórz zdanie</string>
+    <string name="quiz_next">Dalej</string>
+    <string name="quiz_finish">Zakończ</string>
+    <string name="quiz_playback_failed">Nie udało się odtworzyć słowa. Użyj „Odtwórz ponownie”.</string>
+    <string name="quiz_muted">Głośność multimediów jest wyciszona</string>
+    <string name="quiz_correct_word">Poprawnie: %1$s</string>
+    <string name="quiz_translation">Tłumaczenie: %1$s</string>
+    <string name="result_correct">Dobrze!</string>
+    <string name="result_incorrect">Źle</string>
+    <string name="result_skipped">Pominięto</string>
+    <string name="abort_title">Przerwać quiz?</string>
+    <string name="abort_message_saved">Odpowiedzi zostaną zapisane, pozostałe słówka zostaną oznaczone jako pominięte.</string>
+    <string name="abort_message_nothing">Nic nie zostanie zapisane.</string>
+    <string name="abort_confirm">Przerwij</string>
+    <string name="abort_continue">Kontynuuj</string>
+
+    <!-- Summary (US2) -->
+    <string name="summary_title">Podsumowanie</string>
+    <string name="summary_percent">%1$d%%</string>
+    <!-- "procent" does not inflect after a number in everyday Polish. -->
+    <string name="summary_percent_cd" tools:ignore="PluralsCandidate">Wynik: %1$d procent</string>
+    <string name="summary_correct">Dobrze: %1$d</string>
+    <string name="summary_incorrect">Źle: %1$d</string>
+    <string name="summary_skipped">Pominięte: %1$d</string>
+    <string name="summary_your_answer">Twoja odpowiedź: %1$s</string>
+    <string name="summary_home">Wróć do ekranu głównego</string>
+    <string name="summary_new_quiz">Nowy quiz</string>
+
+    <!-- Settings (US4) -->
+    <string name="settings_title">Ustawienia</string>
+    <string name="settings_variant">Odmiana angielskiego</string>
+    <string name="variant_us">Amerykański</string>
+    <string name="variant_gb">Brytyjski</string>
+    <string name="settings_voice">Głos</string>
+    <string name="settings_voice_item">Głos %1$d</string>
+    <string name="settings_voice_default">Głos domyślny</string>
+    <string name="settings_preview">Odsłuchaj próbkę</string>
+    <string name="settings_skip">Pomijanie słówek</string>
+    <string name="settings_skip_desc">Pozwala pominąć słówko i przerwać quiz.</string>
+    <string name="settings_voices_missing">Brak głosu offline dla tej odmiany angielskiego.</string>
+    <string name="settings_no_voices">Nie znaleziono głosów do wyboru – zostanie użyty głos domyślny.</string>
+    <string name="preview_sample" translatable="false">Hello</string>
+
+    <!-- Statistics (US5, US6) -->
+    <string name="stats_title">Statystyka</string>
+    <string name="stats_sessions">Sesje</string>
+    <string name="stats_words">Słówka</string>
+    <string name="stats_correct">Dobrze</string>
+    <string name="stats_incorrect">Źle</string>
+    <string name="stats_average">Średni wynik</string>
+    <string name="stats_percent">%1$d%%</string>
+    <string name="stats_no_value">—</string>
+    <string name="stats_chart_title">Ostatnie 10 sesji</string>
+    <string name="stats_no_data">Brak danych</string>
+    <string name="stats_chart_cd">Wykres ostatnich sesji. %1$s</string>
+    <string name="stats_chart_point_cd">%1$s: dobrze %2$d, źle %3$d.</string>
+    <string name="stats_details">Szczegóły sesji</string>
+    <string name="stats_session_counts">Dobrze: %1$d · Źle: %2$d · Pominięte: %3$d</string>
+    <string name="stats_clear">Wyczyść dane</string>
+    <string name="stats_cleared">Statystyki zostały usunięte</string>
+    <string name="clear_title">Usunąć wszystkie statystyki?</string>
+    <string name="clear_message">Wszystkie statystyki zostaną trwale usunięte. Zestawy słówek pozostaną bez zmian. Aby potwierdzić, wpisz łączną liczbę słówek widoczną w podsumowaniu.</string>
+    <string name="clear_input_label">Wpisz łączną liczbę słówek</string>
+    <string name="clear_wrong">Nieprawidłowa liczba. Dane nie zostały usunięte.</string>
+    <string name="clear_confirm">Usuń wszystko</string>
+</resources>

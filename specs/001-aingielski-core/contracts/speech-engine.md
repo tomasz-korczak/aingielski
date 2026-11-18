@@ -29,6 +29,9 @@ interface SpeechEngine {
 
     /** Intent-free description of where the user can fix missing voices. */
     fun voiceInstallAction(): VoiceInstallAction
+
+    /** True when the output stream used for speech is muted (volume 0). */
+    fun isOutputMuted(): Boolean
 }
 
 enum class EnglishVariant { US, GB }
@@ -61,6 +64,7 @@ sealed interface VoiceInstallAction {
 | S4 | When `voiceId` is unknown or not installed, `speak()` uses the default voice for the variant instead of failing. |
 | S5 | `availability` is never `Ready` for a variant that has no usable voice. |
 | S6 | Implementations are safe to call from the main thread; blocking work happens internally. |
+| S7 | When audio output is interrupted (audio focus lost to a call or another app, or headphones unplugged), playback stops and the pending `speak()` returns `Interrupted`. The engine never resumes or replays by itself (FR-023a). |
 
 ## Implementations
 

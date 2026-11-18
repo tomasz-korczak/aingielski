@@ -1,18 +1,3 @@
-<!--
-Sync Impact Report
-- Version change: (template, unversioned) → 1.0.0
-- Modified principles (all newly defined from template placeholders):
-  - [PRINCIPLE_1_NAME] → I. Native Android
-  - [PRINCIPLE_2_NAME] → II. Learner-First Simplicity
-  - [PRINCIPLE_3_NAME] → III. Offline-First & Privacy
-  - [PRINCIPLE_4_NAME] → IV. Testable Learning Logic
-  - [PRINCIPLE_5_NAME] → V. Accessible & Localizable UI
-- Added sections: Technical Constraints, Development Workflow, Governance rules
-- Removed sections: none
-- Templates requiring updates: none (dependent templates read the constitution at runtime)
-- Follow-up TODOs: none
--->
-
 # Aingielski Constitution
 
 ## Core Principles

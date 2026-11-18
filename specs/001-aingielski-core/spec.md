@@ -40,6 +40,16 @@ set never affects session stats." (full original description retained in convers
   applies regardless of the American/British setting (which affects pronunciation only).
 - Q: Should keyboard autocorrect and suggestions be disabled in the answer field? → A: Yes —
   autocorrect, suggestions and auto-capitalization are turned off.
+- Q: When more difficult words qualify than requested, which are picked? → A: Highest error
+  ratio first, ties broken randomly.
+- Q: Is the example sentence ever shown as text? → A: Yes, after the answer is revealed or the
+  word skipped; never before.
+- Q: What does "Nowy quiz" pre-fill? → A: The previous set, word count and criterion (defaults
+  if the set no longer exists).
+- Q: What happens on audio interruption or backgrounding during playback? → A: Playback stops;
+  nothing replays automatically; the learner replays manually.
+- Q: Should the app warn about muted media volume? → A: Yes, a non-blocking hint at quiz start.
+- Q: Is a slower speech rate in scope? → A: No, not in this version.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -108,7 +118,7 @@ feedback, the progress counter, and the final summary (counts, percentage, color
    it records the word as skipped and reveals the correct word and translation before moving on.
 8. **Given** all words have been answered or skipped, **When** the last word is completed,
    **Then** a summary shows correct / incorrect / skipped counts, the success percentage for this
-   quiz, and every quiz word colored green (correct), red (incorrect) or orange (skipped), with
+   quiz (e.g. 7 correct of 12 → 58%), and every quiz word colored green (correct), red (incorrect) or orange (skipped), with
    "Wróć do ekranu głównego" and "Nowy quiz" actions.
 9. **Given** a quiz is in progress, **When** the learner uses the system back gesture/button,
    **Then** the quiz does not navigate back to any previous word or screen.
@@ -117,14 +127,18 @@ feedback, the progress counter, and the final summary (counts, percentage, color
    recorded as skipped, and the learner returns to the main screen.
 11. **Given** skipping is enabled and no word has been answered yet, **When** the learner aborts,
    **Then** no session is saved.
+12. **Given** a 10-word quiz where 2 words were answered and the third word is on screen unanswered,
+   **When** the system closes the app and the learner relaunches it, **Then** the app opens on the
+   main screen (the quiz is not resumed) and statistics contain that session with the 2 results
+   and 8 skipped words, the 8 counting as not played.
 
 ---
 
 ### User Story 3 - Targeted word selection: new and difficult words (Priority: P2)
 
-In the quiz setup the learner can choose "only new words" (never played before for this set name)
-or "difficult words" (words with an error ratio of at least 51% in previous sessions of this set
-name) instead of the default random selection.
+In the quiz setup the learner can choose "Tylko nowe" (only new words: never played before for this
+set name) or "Trudne" (difficult words: an error ratio of at least 51% in previous sessions of this
+set name) instead of the default "Losowe" (random) selection.
 
 **Why this priority**: Adds learning efficiency on top of the core quiz but is not required for a
 usable first version.
@@ -141,8 +155,13 @@ and verify "difficult words" selects them first.
    **When** the quiz starts, **Then** it contains those 4 new words plus 6 other words chosen at
    random from the set, with no duplicates.
 3. **Given** word "cat" was answered incorrectly 2 times and correctly 1 time in sessions of the
-   same set name, **When** "difficult words" is chosen, **Then** "cat" (error ratio 67%) is eligible;
+   same set name, **When** "Trudne" is chosen, **Then** "cat" (error ratio 67%) is eligible;
    a word with 1 correct and 1 incorrect answer (50%) is not.
+4. **Given** no word of the selected set reaches the 51% threshold, **When** the learner starts a
+   quiz with "Trudne", **Then** the setup shows that 0 words match, and the quiz uses only randomly
+   chosen words.
+5. **Given** 15 difficult words exist and the learner requests 10, **When** the quiz starts,
+   **Then** it contains the 10 with the highest error ratios (ties chosen randomly).
 
 ---
 
@@ -226,8 +245,19 @@ nothing deleted), then typing 57 (all statistics removed).
   at least 10 words; nothing is saved.
 - Empty or whitespace-only answer: the answer cannot be submitted.
 - Leading/trailing spaces in the answer are ignored; repeated inner spaces are treated as one.
-- Speech engine unavailable or fails: the learner sees a Polish message with a shortcut to device
-  speech settings; the quiz cannot start (or, if mid-quiz, the learner may retry playback).
+- Speech engine unavailable or no offline voice for the chosen variant: the learner sees a Polish
+  message with a shortcut to download voices; the quiz cannot start (FR-021a).
+- Speech fails mid-quiz (or the first automatic playback is interrupted): the answer field still
+  appears with a Polish message suggesting "Odtwórz ponownie"; the word can be answered or skipped
+  as usual (FR-022).
+- Audio interrupted (phone call, another app takes audio, headphones unplugged) or the app goes to
+  the background during playback: playback stops immediately and nothing replays automatically;
+  the learner replays manually (FR-023a).
+- Media volume muted at quiz start: a non-blocking Polish hint is shown (FR-021b).
+- Set with exactly 10 words: the allowed range is shown as "10–10" and only 10 is accepted.
+- "Nowy quiz" after the previous set was deleted or overwritten in the meantime: setup always shows
+  the current sets; a deleted set is not preselected (defaults apply), an overwritten set is
+  preselected with its new size and the count re-validated (FR-032).
 - Playback is requested while another playback is in progress: the current playback stops and the
   new one starts.
 - App moved to background mid-quiz and resumed: the quiz continues at the same word and state.
@@ -235,7 +265,9 @@ nothing deleted), then typing 57 (all statistics removed).
   exactly as if aborted — saved only if at least one word was answered, remaining words recorded
   as skipped and not played. This applies whether or not skipping is enabled. The quiz is not
   resumed.
-- Skipping disabled: no skip and no abort option; the quiz can only be left by finishing it.
+- Skipping disabled: no skip and no abort option; the quiz can only be left by finishing it. This
+  is intentional: a learner who cannot spell a word must still submit some text, which is recorded
+  as incorrect.
 - CSV file empty or containing only blank lines: import rejected with a Polish message.
 - CSV line with more than three fields (e.g. an unquoted comma inside a sentence in a
   comma-delimited file): treated as invalid, reported with its line number.
@@ -272,17 +304,25 @@ nothing deleted), then typing 57 (all statistics removed).
   maximum equal to the set's word count. The word-count field MUST be pre-filled with 10 and
   keep the learner's value when a different set is selected (re-validated against the new range).
 - **FR-012**: The setup MUST reject counts below 10 or above the set size with a clear Polish error
-  message stating the allowed range, and MUST NOT start the quiz in that case.
+  message stating the allowed range, and MUST NOT start the quiz in that case. An empty or
+  non-numeric value is treated the same way (the field accepts digits only).
 - **FR-013**: The setup MUST offer exactly one selection criterion at a time: "Losowe" (random,
-  default), "Tylko nowe" (only new), "Trudne" (difficult).
+  default), "Tylko nowe" (only new), "Trudne" (difficult). For "Tylko nowe" and "Trudne" the setup
+  MUST show how many words of the selected set currently match, and note when fewer match than
+  requested that the rest will be chosen randomly.
 - **FR-014**: "New" words MUST be words of the selected set never played in any past session
   recorded under the same set name (matched by English word, case-insensitive).
 - **FR-015**: "Difficult" words MUST be words whose error ratio — incorrect ÷ (correct + incorrect)
-  across past sessions recorded under the same set name — is at least 51%. Skipped results are
-  excluded from the ratio; words with no correct or incorrect results are not difficult.
+  across past sessions recorded under the same set name — is at least 51%, compared exactly with
+  no rounding (incorrect × 100 ≥ 51 × (correct + incorrect)). Skipped results are excluded from
+  the ratio; words with no correct or incorrect results are not difficult.
 - **FR-016**: When fewer words meet the chosen criterion than requested, the remainder MUST be
-  filled with randomly chosen words from the rest of the set.
-- **FR-017**: Each word MUST appear at most once per session; the order of words MUST be random.
+  filled with randomly chosen words from the rest of the set. When more words meet the criterion
+  than requested, "Tylko nowe" picks among them randomly, while "Trudne" picks those with the
+  highest error ratio first (ties broken randomly).
+- **FR-017**: Each word MUST appear at most once per session. Random choices MUST be uniform
+  (every eligible word equally likely, without replacement), and the presentation order of the
+  selected words MUST be a uniform random shuffle.
 
 **Quiz flow**
 
@@ -291,16 +331,31 @@ nothing deleted), then typing 57 (all statistics removed).
   variant from settings, without revealing the word, its translation or its example sentence.
   The settings in effect when the quiz starts (variant, voice, word skipping) apply until the quiz
   ends.
-- **FR-022**: The answer input MUST appear after the first automatic playback finishes.
+- **FR-021a**: A quiz MUST NOT start unless an offline voice for the selected English variant is
+  available; otherwise the app MUST explain this in Polish and offer to open the voice-download
+  screen.
+- **FR-021b**: If the device's media volume is muted when the quiz starts, the app MUST show a
+  non-blocking Polish hint ("Głośność multimediów jest wyciszona").
+- **FR-022**: The answer input MUST appear after the first automatic playback finishes. If that
+  playback fails or is interrupted, the input MUST still appear, together with a Polish message
+  suggesting "Odtwórz ponownie".
 - **FR-022a**: The answer input MUST request the keyboard to disable autocorrection, word
   suggestions and automatic capitalization, so the checked answer is exactly what the learner
   typed. (Keyboards that ignore this request are outside the app's control.)
+- **FR-022b**: The answer input MUST accept any characters, up to 200 characters.
 - **FR-023**: The learner MUST be able to replay the word and play its example sentence an
   unlimited number of times, via buttons with play icons and captions "Odtwórz ponownie" and
-  "Odtwórz zdanie", before and after answering.
+  "Odtwórz zdanie", from the moment the answer field appears (after the first automatic
+  playback), both before and after answering.
+- **FR-023a**: Playback MUST stop immediately when audio is interrupted (phone call, another app
+  taking audio, headphones unplugged) or the app goes to the background. Nothing replays
+  automatically afterwards; the learner uses the play buttons.
 - **FR-024**: When word skipping is enabled, a "Pomiń" button MUST appear together with the input
-  field (after the first automatic playback finishes) and remain until the word is answered; skipping records the word as skipped and shows the correct word and translation.
-- **FR-025**: Submitted answers MUST be compared with the played word case-insensitively, ignoring
+  field (after the first automatic playback finishes) and remain until the word is answered;
+  skipping records the word as skipped and shows the same revealed state as FR-026 (correct word,
+  translation, example sentence, "Dalej"); the next word is presented only after "Dalej".
+- **FR-025**: Submitted answers MUST be compared with the played word case-insensitively (Unicode
+  case folding that does not depend on the device language, so "Café" equals "café"), ignoring
   leading/trailing whitespace and collapsing repeated inner spaces. All other characters,
   including apostrophes, hyphens and other punctuation, MUST match exactly. The word field of an
   entry is the single accepted answer: characters such as "/" or parentheses have no special
@@ -308,13 +363,22 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-025a**: The English variant setting (FR-040) affects pronunciation only; accepted spelling
   is always exactly the word as written in the imported set, regardless of variant.
 - **FR-026**: After an answer, the app MUST show whether it was correct, the correct word (when
-  incorrect) and the Polish translation; then show "Dalej", hide "Pomiń", and keep the play buttons.
+  incorrect), the Polish translation and the text of the example sentence; then show "Dalej", hide
+  "Pomiń", and keep the play buttons. Before this point the sentence text is never shown.
 - **FR-027**: The quiz MUST NOT offer any way to return to a previous word; the system back action
-  MUST NOT leave or rewind the quiz.
+  MUST NOT leave or rewind the quiz. When skipping is enabled, system back opens the abort
+  confirmation (FR-028); otherwise it does nothing.
+- **FR-027a**: Screen readers MUST NOT be able to read the word, its translation or its sentence
+  before the reveal; the correct/incorrect result MUST be announced when it appears, and the play
+  buttons, input and actions MUST have Polish labels.
 - **FR-028**: When skipping is enabled, the learner MUST be able to abort the quiz ("Przerwij quiz")
-  after confirming. The abort action MUST be available from the moment the answer field appears
-  until the quiz ends, both while answering and after an answer is revealed. If at least one word was answered (correct or incorrect), the session MUST be
-  saved with all not-yet-completed words — including the word currently on screen if it has not
+  after confirming. The confirmation MUST state the consequence: when at least one word has been
+  answered, "Odpowiedzi zostaną zapisane, pozostałe słówka zostaną oznaczone jako pominięte";
+  otherwise "Nic nie zostanie zapisane"; with buttons "Przerwij" and "Kontynuuj". The abort action
+  MUST be available from the moment the answer field appears
+  until the quiz ends, both while answering and after an answer is revealed. If at least one word
+  was answered (correct or incorrect), the session MUST be saved with all not-yet-completed
+  words — including the word currently on screen if it has not
   been answered or skipped — recorded as skipped and marked as not played (they remain "new" for
   FR-014); otherwise no session is saved.
 - **FR-028a**: Each word result MUST be stored as soon as it is given, so that if the app is closed
@@ -330,13 +394,15 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-031**: The summary MUST list every quiz word colored green (correct), red (incorrect) or
   orange (skipped); incorrect entries MUST also show what the learner typed.
 - **FR-032**: The summary MUST offer "Wróć do ekranu głównego" (main screen) and "Nowy quiz"
-  (opens the quiz setup).
+  (opens the quiz setup pre-filled with the same set, word count and criterion; if that set no
+  longer exists, setup opens with defaults).
 
 **Settings**
 
 - **FR-040**: Settings MUST include English variant (Amerykański / Brytyjski; default American),
-  voice (list of voices installed on the device for the chosen variant; default: device default
-  voice for that variant), and word skipping (Tak / Nie; default Tak).
+  voice (list of voices installed on the device for the chosen variant that work without an
+  internet connection; default: device default voice for that variant), and word skipping
+  (Tak / Nie; default Tak).
 - **FR-041**: Changing the variant MUST refresh the voice list; a voice not matching the new variant
   MUST be replaced by the default voice for that variant.
 - **FR-042**: The learner SHOULD be able to preview the selected voice with a sample word.
@@ -392,6 +458,7 @@ nothing deleted), then typing 57 (all statistics removed).
 - **FR-070**: The app MUST store word sets on the device: unique name and a list of entries (word,
   translation, example sentence).
 - **FR-071**: The app MUST store each session on the device: word set name, start date and time, the
+  selection criterion, the
   words selected for the session (with their translations, independent of the word set), and for
   each word its result (correct / incorrect / skipped), what the learner typed, and whether it
   counts as played (completed by an answer or "Pomiń", per FR-028).
@@ -416,7 +483,8 @@ nothing deleted), then typing 57 (all statistics removed).
 
 - **SC-001**: A learner with an imported set can start a 10-word quiz from the main screen in under
   30 seconds and 5 taps or fewer.
-- **SC-002**: Each word starts playing within 1 second of being presented, in 95% of cases.
+- **SC-002**: Each word, including the first of a quiz, starts playing within 1 second of being
+  presented in 95% of cases, measured on a mid-range device after the app has finished starting.
 - **SC-003**: 100% of answers differing from the played word only in letter case or surrounding
   spaces are judged correct.
 - **SC-004**: Importing a valid 500-word CSV file completes in under 5 seconds; 100% of invalid
@@ -443,7 +511,11 @@ nothing deleted), then typing 57 (all statistics removed).
 - Duplicate English words in one file make the file invalid (keeps "new" and "difficult" tracking
   unambiguous).
 - Statistics link to words by set name + English word (case-insensitive); importing a set under a
-  name used earlier reuses the history recorded under that name.
+  name used earlier reuses the history recorded under that name. Accepted consequence: re-importing
+  the same words under a different name starts with no history, so all its words count as new and
+  none as difficult.
+- Speech rate is not adjustable in this version; playback uses the voice's normal speed (a slower
+  option is a possible future feature).
 - "Played" means the word was presented and the learner completed it (answered or pressed
   "Pomiń"). Words left unfinished by an abort or interruption — including one already heard but
   not answered — count as skipped in totals but do not make a word "not new".
